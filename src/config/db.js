@@ -1,10 +1,11 @@
 const mongoose = require("mongoose");
 
 const dbConnect = async () => {
-  const url = "mongodb://127.0.0.1:27017/api-iglesia";
+  //const url = "mongodb://127.0.0.1:27017/api-iglesia";
+
   try {
     await mongoose.connect(
-      url,
+      process.env.URL_DB,
       {
         useNewUrlParser: true,
         useFindAndModify: false,
