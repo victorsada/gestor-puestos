@@ -1,4 +1,5 @@
 const express = require("express");
+const auth = require("../middlewares/auth");
 const {
   createMeeting,
   getMeeting,
@@ -6,7 +7,7 @@ const {
 
 const router = express.Router();
 
-router.post("/", createMeeting);
-router.get("/", getMeeting);
+router.post("/", auth, createMeeting);
+router.get("/", auth, getMeeting);
 
 module.exports = router;

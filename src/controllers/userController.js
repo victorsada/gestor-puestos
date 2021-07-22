@@ -1,11 +1,12 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const createError = require("http-errors");
 
 module.exports.createUser = async (req, res) => {
   try {
     if (!req.body.email || !req.body.name || !req.body.password) {
-      throw new Error("Name, Email and Password are required");
+      throw createError(400, "Name, Email and Password are required");
     }
     //validate unique email
     const userExist = await User.findOne({
@@ -13,15 +14,11 @@ module.exports.createUser = async (req, res) => {
     });
     if (userExist) {
       if (userExist.email == req.body.email.toLowerCase().trim()) {
-        throw new Error("This user already exist");
+        throw createError(409, "This user already exist");
       }
     }
 
     const user = new User(req.body);
-    if (!user) {
-      throw Error("bad request");
-    }
-
     //Hash Password
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt);
@@ -34,19 +31,19 @@ module.exports.createUser = async (req, res) => {
     res.status(201).send(user);
   } catch (error) {
     console.log(error);
-    res.status(500).send({ error: "Oops, something went wrong" });
+    res.status(error.status).send(error);
   }
 };
 
 module.exports.login = async (req, res) => {
   try {
     if (!req.body.email || !req.body.password) {
-      throw new Error("Email and Password are required");
+      throw createError(400, "Email and Password are required");
     }
 
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
-      throw new Error("User not exist");
+      throw createError(404, "User not exist");
     }
     //verify password
     const passwordCorrect = await bcrypt.compare(
@@ -54,7 +51,7 @@ module.exports.login = async (req, res) => {
       user.password
     );
     if (!passwordCorrect) {
-      throw new Error("Password incorrect");
+      throw createError(409, "Password incorrect");
     }
 
     const token = await jwt.sign({ _id: user._id }, process.env.SECRET);
@@ -63,7 +60,7 @@ module.exports.login = async (req, res) => {
     res.status(200).send(user);
   } catch (error) {
     console.log(error);
-    res.status(500).send({ msg: "Oops, something went wrong" });
+    res.status(error.status).send(error);
   }
 };
 
@@ -73,23 +70,22 @@ module.exports.getUser = async (req, res) => {
     res.send(user);
   } catch (error) {
     console.log(error);
-    res.status(500).send({ msg: "Oops, something went wrong" });
+    res.status(error.status).send(error);
   }
 };
 
 module.exports.updateUser = async (req, res) => {
   try {
-    const userExist = await User.findById({ _id: req.params.id });
-    if (!userExist) {
-      throw new Error("User not found");
-    }
     const user = await User.findByIdAndUpdate(
-      { _id: userExist._id },
+      { _id: req.params.id },
       req.body,
       {
         new: true,
       }
     );
+    if (!user) {
+      throw createError(404, "User not found");
+    }
     //Hash Password
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt);
@@ -98,7 +94,7 @@ module.exports.updateUser = async (req, res) => {
     res.status(201).send(user);
   } catch (error) {
     console.log(error);
-    res.status(500).send({ msg: "Oops, something went wrong" });
+    res.status(error.status).send(error);
   }
 };
 
@@ -106,7 +102,7 @@ module.exports.deleteUser = async (req, res) => {
   try {
     const userExist = await User.findById({ _id: req.params.id });
     if (!userExist) {
-      throw new Error("User not found");
+      throw createError(404, "User not found");
     }
     User.findByIdAndRemove({ _id: userExist._id })
       .then(() => {
@@ -119,7 +115,7 @@ module.exports.deleteUser = async (req, res) => {
       });
   } catch (error) {
     console.log(error);
-    res.status(500).send({ msg: "Oops, something went wrong" });
+    res.status(error.status).send(error);
   }
 };
 
@@ -132,6 +128,6 @@ module.exports.logout = async (req, res) => {
     res.status(200).send({ msg: `User ${user.name} is logout` });
   } catch (error) {
     console.log(error);
-    res.status(500).send({ msg: "Oops, something went wrong" });
+    res.status(error.status).send(error);
   }
 };

@@ -1,11 +1,18 @@
 const express = require("express");
+const auth = require("../middlewares/auth");
 const {
-  getAssistat,
+  getAssistats,
   createAssistant,
+  getAssistat,
+  updateAssistant,
+  deleteAssistant,
 } = require("../controllers/assistantController");
 const router = express.Router();
 
-router.post("/", createAssistant);
-router.get("/", getAssistat);
+router.post("/", auth, createAssistant);
+router.get("/", auth, getAssistats);
+router.get("/:id", auth, getAssistat);
+router.patch("/:id", auth, updateAssistant);
+router.delete("/:id", auth, deleteAssistant);
 
 module.exports = router;

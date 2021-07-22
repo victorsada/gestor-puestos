@@ -1,20 +1,26 @@
 const mongoose = require("mongoose");
 
-const meetingSchema = mongoose.Schema({
+const meetingSchema = mongoose.Schema(
+  {
     name: {
-        type: String,
-        trim: true,
-        required: true
+      type: String,
+      trim: true,
+      required: true,
     },
-    date:{
-        type: Date,
-        required: true
+    date: {
+      type: Date,
+      required: true,
+    },
+    time: {
+      type: String,
     },
     amountPeople: {
-        type: Number
-    }
-},{
-    timestamps: true
-})
+      type: Number,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-module.exports = mongoose.model('Meeting', meetingSchema);
+module.exports = mongoose.model("Meeting", meetingSchema);

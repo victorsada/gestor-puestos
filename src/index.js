@@ -12,6 +12,15 @@ app.use("/api/user", require("./routes/user"));
 app.use("/api/assistant", require("./routes/assistant"));
 app.use("/api/meeting", require("./routes/meeting"));
 
+app.use((error, req, res, next) => {
+  res.status(error.status);
+  res.json({
+    status: error.status,
+    message: error.message,
+    stack: error.stack,
+  });
+});
+
 app.listen(port, () => {
   console.log("Server is up on port ", port);
 });
