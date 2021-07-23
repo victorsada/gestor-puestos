@@ -13,7 +13,7 @@ const dbConnect = async () => {
         useCreateIndex: true,
       },
       () => {
-        console.log("Base de datos conectada!!");
+        console.log("Database connected");
       }
     );
   } catch (error) {

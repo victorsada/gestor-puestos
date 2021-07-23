@@ -13,10 +13,19 @@ const meetingSchema = mongoose.Schema(
     },
     time: {
       type: String,
+      required: true,
     },
     amountPeople: {
       type: Number,
     },
+    // assistants: [
+    //   {
+    //     assistant: {
+    //       type: mongoose.Schema.Types.ObjectId,
+    //       ref: "Assistant",
+    //     },
+    //   },
+    // ],
   },
   {
     timestamps: true,

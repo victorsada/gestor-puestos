@@ -1,5 +1,7 @@
 const Assistant = require("../models/assistant");
 const createError = require("http-errors");
+const _ = require("lodash");
+const { filter } = require("lodash");
 
 module.exports.createAssistant = async (req, res) => {
   try {
@@ -16,10 +18,34 @@ module.exports.createAssistant = async (req, res) => {
 };
 
 module.exports.getAssistats = async (req, res) => {
+  const sortBy = req.query.sortBy;
+  const sortDirection = req.query.sortDirection;
+  const filterBy = req.query.filterBy;
+  const filterValues = req.query.filterValues;
+  const limit = req.query.limit;
+  const page = req.query.page;
+  const startIndex = (page - 1) * limit;
+  let order;
+  let filter;
   try {
-    const assistant = await Assistant.find();
+    if (sortBy && sortDirection) {
+      const orderBy = sortBy.split();
+      const orderDirection = sortDirection.split();
+      order = _.zipObject(orderBy, orderDirection);
+    }
 
-    if (!assistant[0]) {
+    if (filterBy && filterValues) {
+      const filterField = filterBy.split();
+      const filterValue = filterValues.split();
+      filter = _.zipObject(filterField, filterValue);
+    }
+
+    const assistant = await Assistant.find(filter)
+      .limit(parseInt(limit))
+      .skip(parseInt(startIndex))
+      .sort(order);
+
+    if (assistant.length === 0) {
       throw createError(404, "No assistent found, go to create one!");
     }
 

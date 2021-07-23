@@ -1,31 +1,34 @@
 const mongoose = require("mongoose");
 
-const assistantSchema = mongoose.Schema({
-    name:{
-        type: String,
-        required: true,
-        trim: true,
+const assistantSchema = mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
     },
-    email:{
-        type: String,
-        lowercase: true
+    email: {
+      type: String,
+      lowercase: true,
     },
     birthday: {
-        type: Date
+      type: Date,
     },
     adress: {
-        type: String
+      type: String,
     },
     telf: {
-        type: String
+      type: String,
     },
     sex: {
-        type: String
+      type: String,
+      lowercase: true,
     },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-},
-{
-    timestamps: true
-});
-
-module.exports = mongoose.model('Assistant', assistantSchema);
+module.exports = mongoose.model("Assistant", assistantSchema);

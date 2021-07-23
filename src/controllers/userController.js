@@ -67,7 +67,7 @@ module.exports.login = async (req, res) => {
 module.exports.getUser = async (req, res) => {
   try {
     const user = await User.find();
-    res.send(user);
+    res.send({ total: user.length, user });
   } catch (error) {
     console.log(error);
     res.status(error.status).send(error);
