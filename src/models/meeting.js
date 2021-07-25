@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
+const Assistant = require("./assistant");
 
-const meetingSchema = mongoose.Schema(
+const meetingSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -18,14 +19,7 @@ const meetingSchema = mongoose.Schema(
     amountPeople: {
       type: Number,
     },
-    // assistants: [
-    //   {
-    //     assistant: {
-    //       type: mongoose.Schema.Types.ObjectId,
-    //       ref: "Assistant",
-    //     },
-    //   },
-    // ],
+    assistants: [{ type: mongoose.Schema.Types.ObjectId, ref: "Assistant" }],
   },
   {
     timestamps: true,
