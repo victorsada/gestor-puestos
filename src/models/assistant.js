@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
-
-const assistantSchema = mongoose.Schema(
+const Meeting = require("./assistant");
+const assistantSchema = new mongoose.Schema(
   {
     name: {
       type: String,

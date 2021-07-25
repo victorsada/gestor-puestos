@@ -11,7 +11,6 @@ app.use(express.json());
 app.use("/api/user", require("./routes/user"));
 app.use("/api/assistant", require("./routes/assistant"));
 app.use("/api/meeting", require("./routes/meeting"));
-
 app.use((error, req, res, next) => {
   res.status(error.status);
   res.json({
