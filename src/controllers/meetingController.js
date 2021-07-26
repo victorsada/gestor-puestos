@@ -176,3 +176,33 @@ module.exports.getMeet = async (req, res) => {
     res.status(error.status).send(error);
   }
 };
+
+module.exports.deleteAssistantFromMeeting = async (req, res) => {
+  const { name, meeting } = req.body;
+  try {
+    if (!name || !meeting) {
+      throw createError(
+        400,
+        "You must specify the *NAME* of the assistant and the name of de *MEETING*"
+      );
+    }
+    const assistant = await Assistant.findOne({ name });
+    if (!assistant) {
+      throw createError(404, `The assistant ${name} could not be found`);
+    }
+    const meet = await Meeting.findOne({ name: meeting });
+    if (!meet) {
+      throw createError(404, `The meeting ${meeting} could not be found`);
+    }
+
+    const indexToDelete = meet.assistants.indexOf(assistant._id);
+    if (indexToDelete > -1) {
+      meet.assistants.splice(indexToDelete, 1);
+    }
+    await meet.save();
+    res.send(meet);
+  } catch (error) {
+    console.log(error);
+    res.status(error.status).send(error);
+  }
+};
