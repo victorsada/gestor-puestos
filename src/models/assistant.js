@@ -7,6 +7,7 @@ const assistantSchema = new mongoose.Schema(
       required: true,
       trim: true,
       lowercase: true,
+      unique: true,
     },
     email: {
       type: String,
@@ -24,6 +25,10 @@ const assistantSchema = new mongoose.Schema(
     sex: {
       type: String,
       lowercase: true,
+    },
+    member: {
+      type: Boolean,
+      default: false,
     },
   },
   {

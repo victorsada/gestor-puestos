@@ -8,6 +8,16 @@ module.exports.createAssistant = async (req, res) => {
     if (!req.body.name) {
       throw createError(400, "Name is required");
     }
+    if (req.body.sex) {
+      if (req.body.sex !== "masculino" && req.body.sex !== "femenino") {
+        throw createError(400, 'Sex must be "Masculino or Femenino" ');
+      }
+    }
+
+    const assistantExist = await Assistant.findOne({ name: req.body.name });
+    if (assistantExist) {
+      throw createError(409, `Assistant ${req.body.name} already exist`);
+    }
     const assistant = new Assistant(req.body);
     await assistant.save();
     res.status(200).send(assistant);
@@ -70,6 +80,12 @@ module.exports.getAssistat = async (req, res) => {
 
 module.exports.updateAssistant = async (req, res) => {
   try {
+    if (req.body.name) {
+      const assistantExist = await Assistant.findOne({ name: req.body.name });
+      if (assistantExist) {
+        throw createError(409, `Assistant ${req.body.name} is already exist`);
+      }
+    }
     const assistant = await Assistant.findByIdAndUpdate(
       { _id: req.params.id },
       req.body,

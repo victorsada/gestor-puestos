@@ -2,9 +2,9 @@ const Meeting = require("../models/meeting");
 const Assistant = require("../models/assistant");
 const createError = require("http-errors");
 const _ = require("lodash");
+const mongoose = require("mongoose");
 
 module.exports.createMeeting = async (req, res) => {
-  let assits = []; // assistant's name in req.body
   let assistant = []; //assostant's fetch in model
   const { name, date, time, amountPeople } = req.body;
 
@@ -12,8 +12,12 @@ module.exports.createMeeting = async (req, res) => {
     if (!name || !date || !time) {
       throw createError(400, "Name, date and time are required");
     }
+    const meetExist = await Meeting.findOne({ name });
+    if (meetExist) {
+      throw createError(409, `Assistant ${name} already exist`);
+    }
     if (req.body.assistants) {
-      assist = req.body.assistants.split(",");
+      const assist = req.body.assistants.split(",");
       assistant = await Assistant.find({ name: assist });
     }
     const meeting = new Meeting({
@@ -123,6 +127,12 @@ module.exports.updateMeeting = async (req, res) => {
       );
     }
     assistant.forEach((item) => {
+      meeting.assistants.forEach((element) => {
+        if (element.toString() == item._id.toString()) {
+          throw createError(400, `${item.name} already belong to the meeting`);
+        }
+      });
+
       meeting.assistants.push(item);
     });
     name ? (meeting.name = name) : null;
@@ -179,6 +189,7 @@ module.exports.getMeet = async (req, res) => {
 
 module.exports.deleteAssistantFromMeeting = async (req, res) => {
   const { name, meeting } = req.body;
+  let err;
   try {
     if (!name || !meeting) {
       throw createError(
@@ -195,12 +206,35 @@ module.exports.deleteAssistantFromMeeting = async (req, res) => {
       throw createError(404, `The meeting ${meeting} could not be found`);
     }
 
+    if (meet.assistants.length == 0) {
+      throw createError(404, `There is not assistants in the meeting`);
+    }
+
+    for (let i = 0; i < meet.assistants.length; i++) {
+      err =
+        meet.assistants[i].toString() == assistant._id.toString()
+          ? "THIS ASSISTANT EXIST"
+          : null;
+      if (err) {
+        break;
+      }
+    }
+    if (!err) {
+      throw createError(
+        404,
+        `${assistant.name} does not belong to this meeting`
+      );
+    }
+
     const indexToDelete = meet.assistants.indexOf(assistant._id);
     if (indexToDelete > -1) {
       meet.assistants.splice(indexToDelete, 1);
     }
+
+    const response = `${assistant.name} was deleted from ${meeting}`;
     await meet.save();
-    res.send(meet);
+
+    res.send({ message: response });
   } catch (error) {
     console.log(error);
     res.status(error.status).send(error);

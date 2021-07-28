@@ -76,6 +76,9 @@ module.exports.getUser = async (req, res) => {
 
 module.exports.updateUser = async (req, res) => {
   try {
+    if (req.body.email) {
+      throw createError(400, "Email cannot be changed");
+    }
     const user = await User.findByIdAndUpdate(
       { _id: req.params.id },
       req.body,

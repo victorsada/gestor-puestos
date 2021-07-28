@@ -23,6 +23,7 @@ const userSchema = mongoose.Schema(
     },
     rol: {
       type: String,
+      default: "ugier",
     },
   },
   {

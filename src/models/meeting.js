@@ -7,6 +7,7 @@ const meetingSchema = new mongoose.Schema(
       type: String,
       trim: true,
       required: true,
+      lowercase: true,
     },
     date: {
       type: Date,
