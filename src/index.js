@@ -3,10 +3,11 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 const app = express();
+const cors = require("cors");
 const port = process.env.PORT || 4000;
 const dbConnect = require("./config/db");
 dbConnect();
-
+app.use(cors());
 app.use(express.json());
 app.use("/api/user", require("./routes/user"));
 app.use("/api/assistant", require("./routes/assistant"));

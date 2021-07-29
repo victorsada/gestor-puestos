@@ -17,16 +17,10 @@ module.exports.createUser = async (req, res) => {
         throw createError(409, "This user already exist");
       }
     }
-
     const user = new User(req.body);
     //Hash Password
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt);
-
-    //Generate Token
-    const token = jwt.sign({ _id: user._id }, process.env.SECRET);
-    user.token = token;
-
     await user.save();
     res.status(201).send(user);
   } catch (error) {
