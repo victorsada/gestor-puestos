@@ -59,7 +59,7 @@ module.exports.getAssistats = async (req, res) => {
       throw createError(404, "No assistent found, go to create one!");
     }
 
-    res.status(200).send({ "Total Assistant": assistant.length, assistant });
+    res.status(200).send({ totalAssistant: assistant.length, assistant });
   } catch (error) {
     console.log(error);
     res.status(error.status).send(error);
