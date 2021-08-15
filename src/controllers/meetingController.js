@@ -110,7 +110,7 @@ module.exports.getMeeting = async (req, res) => {
 };
 
 module.exports.updateMeeting = async (req, res) => {
-  let assits = []; // assistant's name in req.body
+  let assist = []; // assistant's name in req.body
   let assistant = []; //assostant's fetch in model
   const { name, date, time, amountPeople } = req.body;
   try {
