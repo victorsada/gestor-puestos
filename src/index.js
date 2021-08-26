@@ -4,7 +4,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 const app = express();
 const cors = require("cors");
-const port = process.env.PORT || 4000;
+app.set("port", process.env.PORT || 3000);
 const dbConnect = require("./config/db");
 dbConnect();
 app.use(cors());
@@ -21,6 +21,6 @@ app.use((error, req, res, next) => {
   });
 });
 
-app.listen(port, () => {
-  console.log("Server is up on port ", port);
+app.listen(app.get("port"), () => {
+  console.log(`Server is up on port ${app.get("port")}`);
 });
