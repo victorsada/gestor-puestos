@@ -2,7 +2,6 @@ const Meeting = require("../models/meeting");
 const Assistant = require("../models/assistant");
 const createError = require("http-errors");
 const _ = require("lodash");
-const mongoose = require("mongoose");
 
 module.exports.createMeeting = async (req, res) => {
   let assistant = []; //assostant's fetch in model
@@ -140,7 +139,10 @@ module.exports.updateMeeting = async (req, res) => {
     time ? (meeting.time = time) : null;
     amountPeople ? (meeting.amountPeople = amountPeople) : null;
     meeting.save();
-    res.status(201).send(meeting);
+    res.status(201).send({
+      meeting,
+      message: `Meeting ${meeting.name} was updated successfully`,
+    });
   } catch (error) {
     console.log(error);
     res.status(error.status).send(error);
@@ -161,26 +163,6 @@ module.exports.deleteMeeting = async (req, res) => {
           .status(404)
           .send({ Messae: `Meeting with id ${req.params.id} could not found` });
       });
-  } catch (error) {
-    console.log(error);
-    res.status(error.status).send(error);
-  }
-};
-
-module.exports.meet = async (req, res) => {
-  try {
-    const meetAssist = new MeetAssist(req.body);
-    meetAssist.save();
-    res.send(meetAssist);
-  } catch (error) {
-    console.log(error);
-    res.status(error.status).send(error);
-  }
-};
-
-module.exports.getMeet = async (req, res) => {
-  try {
-    res.send("its woerk");
   } catch (error) {
     console.log(error);
     res.status(error.status).send(error);

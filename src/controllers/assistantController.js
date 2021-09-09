@@ -94,7 +94,12 @@ module.exports.updateAssistant = async (req, res) => {
     if (!assistant) {
       throw createError(404, "Assistant not found.");
     }
-    res.status(201).send({ "Assistant updated:": assistant });
+    res
+      .status(201)
+      .send({
+        message: `Assistant ${assistant.name} was updated successfully`,
+        "Assistant updated:": assistant,
+      });
   } catch (error) {
     console.log(error);
     res.status(error.status).send(error);
