@@ -1,7 +1,7 @@
-const Meeting = require("../models/meeting");
-const Assistant = require("../models/assistant");
-const createError = require("http-errors");
-const _ = require("lodash");
+const Meeting = require('../models/meeting');
+const Assistant = require('../models/assistant');
+const createError = require('http-errors');
+const _ = require('lodash');
 
 module.exports.createMeeting = async (req, res) => {
   let assistant = []; //assostant's fetch in model
@@ -9,14 +9,14 @@ module.exports.createMeeting = async (req, res) => {
 
   try {
     if (!name || !date || !time) {
-      throw createError(400, "Name, date and time are required");
+      throw createError(400, 'Name, date and time are required');
     }
     const meetExist = await Meeting.findOne({ name });
     if (meetExist) {
       throw createError(409, `Assistant ${name} already exist`);
     }
     if (req.body.assistants) {
-      const assist = req.body.assistants.split(",");
+      const assist = req.body.assistants.split(',');
       assistant = await Assistant.find({ name: assist });
     }
     const meeting = new Meeting({
@@ -66,7 +66,7 @@ module.exports.getMeetings = async (req, res) => {
       .sort(order);
 
     if (meetings.length === 0) {
-      throw createError(404, "Meetings not found, go to create one");
+      throw createError(404, 'Meetings not found, go to create one');
     }
 
     const meeting = meetings.map((meet) => {
@@ -92,8 +92,8 @@ module.exports.getMeetings = async (req, res) => {
 module.exports.getMeeting = async (req, res) => {
   try {
     const meeting = await Meeting.findById({ _id: req.params.id }).populate(
-      "assistants",
-      "name"
+      'assistants',
+      'name'
     );
     if (!meeting) {
       throw createError(
@@ -114,7 +114,7 @@ module.exports.updateMeeting = async (req, res) => {
   const { name, date, time, amountPeople } = req.body;
   try {
     if (req.body.assistants) {
-      assist = req.body.assistants.split(",");
+      assist = req.body.assistants.split(',');
       assistant = await Assistant.find({ name: assist });
     }
 
@@ -176,7 +176,7 @@ module.exports.deleteAssistantFromMeeting = async (req, res) => {
     if (!name || !meeting) {
       throw createError(
         400,
-        "You must specify the *NAME* of the assistant and the name of de *MEETING*"
+        'You must specify the *NAME* of the assistant and the name of de *MEETING*'
       );
     }
     const assistant = await Assistant.findOne({ name });
@@ -195,7 +195,7 @@ module.exports.deleteAssistantFromMeeting = async (req, res) => {
     for (let i = 0; i < meet.assistants.length; i++) {
       err =
         meet.assistants[i].toString() == assistant._id.toString()
-          ? "THIS ASSISTANT EXIST"
+          ? 'THIS ASSISTANT EXIST'
           : null;
       if (err) {
         break;
@@ -217,6 +217,50 @@ module.exports.deleteAssistantFromMeeting = async (req, res) => {
     await meet.save();
 
     res.send({ message: response });
+  } catch (error) {
+    console.log(error);
+    res.status(error.status).send(error);
+  }
+};
+
+module.exports.addAssistantToMeeting = async (req, res) => {
+  const { meeting, assistant } = req.body;
+
+  try {
+    if (!meeting || !assistant) {
+      throw createError(400, '*MEETING* and *ASSISTANT* are required');
+    }
+
+    const assist = assistant.split(',');
+    //get assistants
+    const asistentes = await Assistant.find({ name: assist });
+    if (asistentes.length === 0) {
+      throw createError(404, `Assistant '${assistant}' could not be found`);
+    }
+    if (assist.length !== asistentes.length) {
+      throw createError(404, 'There was an error requesting Assistants');
+    }
+    //get meeting
+    const meet = await Meeting.findOne({ name: meeting });
+    if (!meet) {
+      throw createError(404, `The meeting ${meeting} could not be found`);
+    }
+
+    //add assistants to meeting
+    asistentes.forEach((item) => {
+      meet.assistants.forEach((element) => {
+        if (element.toString() == item._id.toString()) {
+          throw createError(400, `${item.name} already belong to the meeting`);
+        }
+      });
+
+      meet.assistants.push(item);
+    });
+    await meet.save();
+
+    res.status(200).send({
+      message: `Assistants was added to meeting successfully`,
+    });
   } catch (error) {
     console.log(error);
     res.status(error.status).send(error);

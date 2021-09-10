@@ -7,6 +7,7 @@ const {
   updateMeeting,
   deleteMeeting,
   deleteAssistantFromMeeting,
+  addAssistantToMeeting,
 } = require("../controllers/meetingController");
 
 const router = express.Router();
@@ -17,5 +18,6 @@ router.get("/:id", auth, getMeeting);
 router.patch("/:id", auth, updateMeeting);
 router.delete("/:id", auth, deleteMeeting);
 router.delete("/", auth, deleteAssistantFromMeeting);
+router.post("/add", auth, addAssistantToMeeting);
 
 module.exports = router;
