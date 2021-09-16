@@ -253,7 +253,12 @@ module.exports.addAssistantToMeeting = async (req, res) => {
           throw createError(400, `${item.name} already belong to the meeting`);
         }
       });
-
+      if (meet.assistants.length === meet.amountPeople) {
+        throw createError(
+          400,
+          'the limit number of people for the meeting has reached its limit'
+        );
+      }
       meet.assistants.push(item);
     });
     await meet.save();
