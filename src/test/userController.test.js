@@ -46,7 +46,7 @@ describe('Unit test for USER CONTROLLER', () => {
         })
         .expect('Content-Type', /application\/json/);
       expect(response.statusCode).toBe(400);
-      expect(response.body.name).toBe(undefined);
+      expect(response.body.name).toBeUndefined();
     });
 
     it('should not create a user beacuse there is not email', async () => {
@@ -55,7 +55,7 @@ describe('Unit test for USER CONTROLLER', () => {
         .send(userDummyWithOutEmail)
         .expect('Content-Type', /application\/json/);
       expect(response.statusCode).toBe(400);
-      expect(response.body.email).toBe(undefined);
+      expect(response.body.email).toBeUndefined();
     });
 
     it('should not create a user beacuse there is not password', async () => {
@@ -64,7 +64,7 @@ describe('Unit test for USER CONTROLLER', () => {
         .send(userDummyWithOutPassword)
         .expect('Content-Type', /application\/json/);
       expect(response.statusCode).toBe(400);
-      expect(response.body.password).toBe(undefined);
+      expect(response.body.password).toBeUndefined();
     });
 
     it('should not create a user beacuse USER already exist', async () => {
@@ -82,7 +82,7 @@ describe('Unit test for USER CONTROLLER', () => {
         .send(userDummyWithOutEmail)
         .expect('Content-Type', /application\/json/);
       expect(response.statusCode).toBe(400);
-      expect(response.body.email).toBe(undefined);
+      expect(response.body.email).toBeUndefined();
     });
 
     it('should not login because password is missing', async () => {
@@ -91,28 +91,105 @@ describe('Unit test for USER CONTROLLER', () => {
         .send(userDummyWithOutPassword)
         .expect('Content-Type', /application\/json/);
       expect(response.statusCode).toBe(400);
-      expect(response.body.password).toBe(undefined);
+      expect(response.body.password).toBeUndefined();
     });
 
-    //que el email no exista
-    //que la password sea incorrecto
-    //que todo vaya ok (200)
+    it('should not login beacause email is wrong', async () => {
+      const response = await api
+        .post('/api/user/login')
+        .send({ email: 'loquesea@loquesea.com', password: userDummy2.password })
+        .expect('Content-Type', /application\/json/);
+      expect(response.statusCode).toBe(404);
+      expect(response.body.message).toBe('User not exist');
+    });
+
+    it('should not login beacuse password is wrong', async () => {
+      const response = await api
+        .post('/api/user/login')
+        .send({ email: userDummy2.email, password: 'loquesea' })
+        .expect('Content-Type', /application\/json/);
+      expect(response.statusCode).toBe(409);
+      expect(response.body.message).toBe('Password incorrect');
+    });
+
+    it('should login user', async () => {
+      const response = await api
+        .post('/api/user/login')
+        .send({ email: userDummy2.email, password: '123456789' })
+        .expect('Content-Type', /application\/json/);
+      expect(response.statusCode).toBe(200);
+      expect(response.body.token).toBeDefined();
+    });
   });
   describe('GET user functionallity', () => {
-    //que no hayan usuarios
-    //OK
+    it('should get users', async () => {
+      const users = await User.find();
+      const response = await api
+        .get('/api/user')
+        .set('Authorization', userDummy2.token);
+      expect(response.statusCode).toBe(200);
+      expect(response.body.user).toHaveLength(users.length);
+    });
   });
   describe('UPDATE user functionallity', () => {
-    //no puede actualizar email
-    // que no haya un usuario
-    //OK
+    it('should not update user beacause email can not be modified', async () => {
+      const response = await api
+        .patch(`/api/user/${userDummy2._id}`)
+        .set('Authorization', userDummy2.token)
+        .expect('Content-Type', /application\/json/)
+        .send(userDummy2);
+      expect(response.statusCode).toBe(400);
+      expect(response.body.message).toBe('Email cannot be changed');
+    });
+
+    it('should not update user beacuse user does not exist', async () => {
+      const response = await api
+        .patch('/api/user/61281fe18b7d4d39e87e542e')
+        .set('Authorization', userDummy2.token)
+        .expect('Content-Type', /application\/json/)
+        .send({ password: 'jose' });
+      expect(response.statusCode).toBe(404);
+      expect(response.body.message).toBe('User not found');
+    });
+
+    it('should update user', async () => {
+      const response = await api
+        .patch(`/api/user/${userDummy2._id}`)
+        .set('Authorization', userDummy2.token)
+        .expect('Content-Type', /application\/json/)
+        .send({ password: 'new password' });
+      expect(response.statusCode).toBe(201);
+      expect(response.body.password).toBeDefined();
+      expect(response.body.message).toBeUndefined();
+    });
   });
   describe('DELETE user functionallity', () => {
-    //que no exista el usuario
-    //OK
+    it('should not delete user beacuse does not exist', async () => {
+      const response = await api
+        .delete('/api/user/61281fe18b7d4d39e87e542e')
+        .set('Authorization', userDummy2.token);
+      expect(response.statusCode).toBe(404);
+      expect(response.body.message).toBe('User not found');
+    });
+
+    it('should delete user', async () => {
+      const response = await api
+        .delete(`/api/user/${userDummy2._id}`)
+        .set('Authorization', userDummy2.token);
+      expect(response.statusCode).toBe(200);
+      expect(response.body.msg).toBe(
+        `User ${userDummy2.name} was deleted successfully`
+      );
+    });
   });
   describe('LOGOUT functionallity', () => {
-    //ok
+    it('User should logout', async () => {
+      const response = await api
+        .post('/api/user/logout')
+        .set('Authorization', userDummy2.token);
+      expect(response.statusCode).toBe(200);
+      expect(response.body.msg).toBe(`User ${userDummy2.name} is logout`);
+    });
   });
 });
 

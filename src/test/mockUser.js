@@ -19,7 +19,7 @@ const userDummy2 = {
   _id: '61281fe18b7f4d39e87e542e',
   email: 'victor@api.com',
   name: 'victor',
-  password: '123456789',
+  password: '$2a$10$861d1vlyaLIwcaUH2hWtmexPaijACBV23de8GKdnM.1GwSGhFlR4.',
   createdAt: '2021-08-26T23:12:33.169Z',
   updatedAt: '2021-09-17T01:32:50.209Z',
   token:
