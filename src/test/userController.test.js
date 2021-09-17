@@ -8,7 +8,7 @@ const {
   userDummyWithOutEmail,
   userDummyWithOutPassword,
   userDummy2,
-} = require('./mockUser');
+} = require('./dummyData/dummyUser');
 
 beforeEach(async () => {
   await User.deleteOne({ email: 'ajgrGOrkhorkHRhorkh@Gapgiojkdfgkf.com' });
@@ -126,7 +126,8 @@ describe('Unit test for USER CONTROLLER', () => {
       const users = await User.find();
       const response = await api
         .get('/api/user')
-        .set('Authorization', userDummy2.token);
+        .set('Authorization', userDummy2.token)
+        .expect('Content-Type', /application\/json/);
       expect(response.statusCode).toBe(200);
       expect(response.body.user).toHaveLength(users.length);
     });
@@ -167,7 +168,8 @@ describe('Unit test for USER CONTROLLER', () => {
     it('should not delete user beacuse does not exist', async () => {
       const response = await api
         .delete('/api/user/61281fe18b7d4d39e87e542e')
-        .set('Authorization', userDummy2.token);
+        .set('Authorization', userDummy2.token)
+        .expect('Content-Type', /application\/json/);
       expect(response.statusCode).toBe(404);
       expect(response.body.message).toBe('User not found');
     });
@@ -175,7 +177,8 @@ describe('Unit test for USER CONTROLLER', () => {
     it('should delete user', async () => {
       const response = await api
         .delete(`/api/user/${userDummy2._id}`)
-        .set('Authorization', userDummy2.token);
+        .set('Authorization', userDummy2.token)
+        .expect('Content-Type', /application\/json/);
       expect(response.statusCode).toBe(200);
       expect(response.body.msg).toBe(
         `User ${userDummy2.name} was deleted successfully`
@@ -186,7 +189,8 @@ describe('Unit test for USER CONTROLLER', () => {
     it('User should logout', async () => {
       const response = await api
         .post('/api/user/logout')
-        .set('Authorization', userDummy2.token);
+        .set('Authorization', userDummy2.token)
+        .expect('Content-Type', /application\/json/);
       expect(response.statusCode).toBe(200);
       expect(response.body.msg).toBe(`User ${userDummy2.name} is logout`);
     });
