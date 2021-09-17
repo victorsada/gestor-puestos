@@ -1,9 +1,13 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const dbConnect = async () => {
+  const connectionString =
+    process.env.NODE_ENV === 'test'
+      ? process.env.URL_DB_TEST
+      : process.env.URL_DB;
   try {
     await mongoose.connect(
-      process.env.URL_DB,
+      connectionString,
       {
         useNewUrlParser: true,
         useFindAndModify: false,
@@ -11,7 +15,7 @@ const dbConnect = async () => {
         useCreateIndex: true,
       },
       () => {
-        console.log("Database connected");
+        console.log('Database connected');
       }
     );
   } catch (error) {
