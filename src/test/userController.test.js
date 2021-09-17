@@ -8,7 +8,7 @@ const {
   userDummyWithOutEmail,
   userDummyWithOutPassword,
   userDummy2,
-} = require('./mockUser');
+} = require('./dummyData/mockUser');
 
 beforeEach(async () => {
   await User.deleteOne({ email: 'ajgrGOrkhorkHRhorkh@Gapgiojkdfgkf.com' });
