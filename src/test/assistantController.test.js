@@ -21,7 +21,7 @@ afterEach(async () => {
 });
 
 describe('Unit test for ASSISTANT CONTROLLER', () => {
-  describe('Test create assistant functionallity', () => {
+  describe('TEST CREATE ASSISTANT FUNCTIONALLITY', () => {
     it('should not create assistant because name does not exist', async () => {
       const response = await api
         .post('/api/assistant/')
@@ -67,7 +67,7 @@ describe('Unit test for ASSISTANT CONTROLLER', () => {
     });
   });
 
-  describe('TEST Get Assistants Functionallity', () => {
+  describe('TEST GET ASSISTANTS FUNCTIONALLITY', () => {
     it('should retrieve assistants', async () => {
       const assistants = await Assistant.find();
       const response = await api
@@ -91,7 +91,7 @@ describe('Unit test for ASSISTANT CONTROLLER', () => {
     });
   });
 
-  describe('TEST GET single Assistant functionallity', () => {
+  describe('TEST GET SINGLE ASSISTANT FUNCTIONALLITY', () => {
     it('should not retrieve assistant', async () => {
       const response = await api
         .get('/api/assistant/613941b8f0be970016358286')
@@ -111,7 +111,7 @@ describe('Unit test for ASSISTANT CONTROLLER', () => {
     });
   });
 
-  describe('TEST UPDATE Assistant functionnallity', () => {
+  describe('TEST UPDATE ASSISTANT FUNCTIONALLITY', () => {
     it('Cannot update assistant because is already exist', async () => {
       const response = await api
         .patch(`/api/assistant/${dummyAssistant._id}`)
@@ -146,7 +146,7 @@ describe('Unit test for ASSISTANT CONTROLLER', () => {
     });
   });
 
-  describe('TEST DELETE Assistant Functionallity', () => {
+  describe('TEST DELETE ASSISTANT FUNCTIONALLITY', () => {
     it('should delete assistant', async () => {
       const response = await api
         .delete(`/api/assistant/${dummyAssistant._id}`)

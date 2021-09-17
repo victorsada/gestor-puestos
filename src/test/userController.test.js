@@ -24,7 +24,7 @@ afterEach(async () => {
 });
 
 describe('Unit test for USER CONTROLLER', () => {
-  describe('Test Create User Functionallity', () => {
+  describe('TEST CREATE USER FUNCTIONALLITY', () => {
     it('should create a user', async () => {
       const response = await api
         .post('/api/user')
@@ -75,7 +75,7 @@ describe('Unit test for USER CONTROLLER', () => {
       expect(response.statusCode).toBe(409);
     });
   });
-  describe('Test login functionallity', () => {
+  describe('TEST LOGIN FUNCTIONALLITY', () => {
     it('should not login because email is missing', async () => {
       const response = await api
         .post('/api/user/login')
@@ -121,7 +121,7 @@ describe('Unit test for USER CONTROLLER', () => {
       expect(response.body.token).toBeDefined();
     });
   });
-  describe('GET user functionallity', () => {
+  describe('TEST GET USER FUNCTIONALLITY', () => {
     it('should get users', async () => {
       const users = await User.find();
       const response = await api
@@ -132,7 +132,7 @@ describe('Unit test for USER CONTROLLER', () => {
       expect(response.body.user).toHaveLength(users.length);
     });
   });
-  describe('UPDATE user functionallity', () => {
+  describe('TEST UPDATE USER FUNCTIONALLITY', () => {
     it('should not update user beacause email can not be modified', async () => {
       const response = await api
         .patch(`/api/user/${userDummy2._id}`)
@@ -164,7 +164,7 @@ describe('Unit test for USER CONTROLLER', () => {
       expect(response.body.message).toBeUndefined();
     });
   });
-  describe('DELETE user functionallity', () => {
+  describe('TEST DELETE USER FUNCTIONALLITY', () => {
     it('should not delete user beacuse does not exist', async () => {
       const response = await api
         .delete('/api/user/61281fe18b7d4d39e87e542e')
@@ -185,7 +185,7 @@ describe('Unit test for USER CONTROLLER', () => {
       );
     });
   });
-  describe('LOGOUT functionallity', () => {
+  describe('TEST LOGOUT FUNCTIONALLITY', () => {
     it('User should logout', async () => {
       const response = await api
         .post('/api/user/logout')
