@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
-    "test": "jest"
+    "start": "cross-env NODE_ENV=development node src/index.js",
+    "dev": "cross-env NODE_ENV=test nodemon src/index.js",
+    "test": "cross-env NODE_ENV=test jest --verbose --detectOpenHandles --silent"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +21,7 @@
     "mongoose": "^5.13.3"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "dotenv": "^10.0.0",
     "jest": "^27.0.6",
     "nodemon": "^2.0.12",
